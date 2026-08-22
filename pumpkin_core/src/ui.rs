@@ -8,26 +8,20 @@ use crossterm::{
     terminal::{enable_raw_mode, disable_raw_mode, Clear, ClearType},
 };
 
-
 pub fn start() {
 
     enable_raw_mode().unwrap();
 
     let mut cursor_num: usize = 0;
 
-
-    // Generate logo
     let output = Command::new("bash")
         .arg("-c")
         .arg("figlet PUMPKIN | lolcat -f")
         .output()
         .expect("Failed to generate logo");
 
-
-    // Fix newline behaviour in raw mode
     let logo = String::from_utf8_lossy(&output.stdout)
         .replace("\n", "\r\n");
-
 
     let actions = vec![
         "Watch Anime",
@@ -36,10 +30,8 @@ pub fn start() {
         "Add More Actions",
     ];
 
-
     loop {
-
-        // Clear previous frame and return cursor to top-left
+        
         execute!(
             io::stdout(),
             Clear(ClearType::All),
@@ -47,17 +39,12 @@ pub fn start() {
         )
         .unwrap();
 
-
-        // Draw logo
         print!("{}", logo);
-
 
         print!("\r\n");
         print!("What do you want to do now?\r\n");
         print!("\r\n");
 
-
-        // Draw actions
         for (index, action) in actions.iter().enumerate() {
 
             let cursor = if index == cursor_num {
@@ -72,8 +59,6 @@ pub fn start() {
 
         io::stdout().flush().unwrap();
 
-
-        // Wait for keyboard event
         let event = read().unwrap();
 
 
@@ -81,7 +66,6 @@ pub fn start() {
 
             match key.code {
 
-                // Down arrow
                 KeyCode::Down => {
 
                     cursor_num += 1;
@@ -89,8 +73,6 @@ pub fn start() {
 
                 }
 
-
-                // Up arrow
                 KeyCode::Up => {
 
                     if cursor_num > 0 {
@@ -99,8 +81,6 @@ pub fn start() {
 
                 }
 
-
-                // Exit
                 KeyCode::Esc => {
                     break;
                 }
@@ -112,8 +92,6 @@ pub fn start() {
         }
     }
 
-
-    // Restore terminal
     disable_raw_mode().unwrap();
 
 }
